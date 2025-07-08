@@ -2,194 +2,121 @@
 
 
 class Pokemon
-  attr_reader :name, :health, :typen, :skills
-  def initialize(name, typen)
+  attr_reader :name, :weight
+  attr_accessor :health
+  @@number_of_pokemons = 0
+
+  def initialize(name, health, weight, typ)
+    @@number_of_pokemons += 1
     @name = name
-    @health = 100
-    @typen = typen
-    @skills = @typen.flat_map(&:skills)
+    @health = health
+    @weight = weight
+    @typ = typ
+    puts "initialized #{name}"
+    puts "#{name} has #{health} Health and is #{weight} Kg heavy and is Type: #{typ}"
   end
 
-  def show_typ
-    @typen.each do |typ|
-    puts "- #{typ.output}"
+  def info
+    "#{name} #{health} #{weight}"
   end
-  end
-
-  def show_skills
-  @skills.each do |skill|
-    puts "- #{skill.output}"
-  end
-  end
-end
-
-
-
-class Feuer
-  attr_reader :skills
-  def initialize
-    @skills = [
-      Skills.new("Feueratem", 30),
-      Skills.new("Glut", 20)
-    ]
-  end
-
-  def output
-    self.class.name
-  end
-
-end
-
-class Wasser
-  attr_reader :skills
-  def initialize
-    @skills = [
-      Skills.new("Wasserstrahl", 30),
-      Skills.new("KNARRE", 20)
-    ]
-  end
-
-  def output
-    self.class.name
-  end
-
-end
-
-class Erde
-  attr_reader :skills
-  def initialize
-    @skills = [
-      Skills.new("Erdbeben", 30),
-      Skills.new("Dampfwalze", 20)
-    ]
-  end
-
-  def output
-    self.class.name
-  end
-end
   
+  def speak
+    p "#{name} #{name}"
+  end
+  
+  def attack(enemy)
+    
+  end
+end
 
-class Luft
-  attr_reader :skills
-  def initialize
-    @skills = [
-      Skills.new("Wirbelwind", 30),
-      Skills.new("Flügelschlag", 20)
-    ]
+class Normal < Pokemon
+  attr_reader :name, :dmg, :immune_t_k, :typ
+  attr_accessor :health, :immunity
+  
+  def initialize(name, health, weight, typ)
+    @immune_t_k = true
+    @immunity = "Kampf"
+    super 
   end
 
-  def output
-    self.class.name
+  def info 
+    p "1. Tackle 40dmg typ Normal"
+    p "2. Blitz 30dmg typ Electro"
+  end
+  def tackle
+    "Tackle, 40"
+  end
+
+  def blitz
+    "Blitz, 30"
   end
 
 end
 
+class Electro < Pokemon
+  attr_reader :name, :dmg, :immune_t_n, :typ
+  attr_accessor :health, :immunity
 
-class Elektro
- attr_reader :skills
-  def initialize
-    @skills = [
-      Skills.new("Elektroshock", 30),
-      Skills.new("Blitz", 20)
-    ]
+  def initialize(name, health, weight, typ)
+    super
+    @immune_t_n = true
+    @immunity = "Normal"
   end
 
-  def output
-    self.class.name
+  def blitz
+    "Blitz, 40"
   end
 
-end
-
-class Normal
- attr_reader :skills
-  def initialize
-    @skills = [
-      Skills.new("Tackle", 30),
-      Skills.new("Kratzer", 20)
-    ]
+  def tackle
+    "tackle, 30"
   end
-
-  def output
-    self.class.name
-  end
-
-end
-
-class Skills
-  attr_reader :name, :dmg
-  def initialize(name, dmg)
-    @name = name
-    @dmg = dmg
-  end
-
-  def output
-    "#{@name} verursacht #{@dmg} Schaden."
-  end
-
-end
-
-def typobj(typnamen)
-  typen = []
-  typnamen.each do |name|
-    case name.downcase
-    when "feuer"
-      typen << Feuer.new  
-    when "wasser"
-      typen << Wasser.new 
-    when "erde"
-      typen << Erde.new
-    when "luft"
-      typen << Luft.new
-    when "elektro"
-      typen << Elektro.new 
-    when "normal"
-      typen << Normal.new 
-    end
-  end
-  typen
-end
-
-  ## Pokemonauswahl
-def chose_pokemon                   
-  puts "Wähle dein Pokemon Beispiel: Pikachu"
-  pokemon_choice = gets.chomp.capitalize
-  puts "Wähle 2 Typen für dein Pokemon Beispiel: Feuer, Wasser, Erde, Luft, Elektro, Normal"
-  typ_choice = gets.chomp.split(",").map(&:strip)               ##choice to Array
  
-
-
-  typen = typobj(typ_choice)
-  playerpokemon = Pokemon.new(pokemon_choice, typen)
-  puts "Dein Pokemon #{playerpokemon.name} hat folgende Typen:"
-  playerpokemon.show_typ
-  puts "Dein Pokemon #{playerpokemon.name} hat folgende Skills:"
-  playerpokemon.show_skills
-
 end
 
-def help
+class Kampf < Pokemon
+  attr_reader :name, :dmg, :immune_t_e, :typ
+  attr_accessor :health, :immunity
   
+
+  def initialize(name, health, weight, typ)
+    super
+    @immune_t_e = true
+    @immunity = "Electro"
+  end
+
+  def geowurf
+   "Geowurf, 40"
+  end
+
+  def karateschlag
+    "Karateschlag, 30"
+  end
+ 
 end
 
-def enemy_pick
+# initialize 3 Pokemon for Testing
+# 
+pokemon_mauzi = Normal.new("Mauzi", 100, 60, "Normal")
+pokemon_pikachu = Electro.new("Pikachu", 80, 80, "Electro")
+pokemon_maschock = Kampf.new("Maschock", 140, 140, "Kampf")
 
+player_pok = pokemon_mauzi
+pc_pok = pokemon_pikachu
+
+def fight_one_round(player_pok, pc_pok)
+  puts "Fight Start: #{player_pok.name} vs #{pc_pok.name}"
+  player_pok.speak
+  pc_pok.speak
+
+  while player_pok.health >= 0 || pc_pok.health >= 0 do
+    puts "Chose your Attack"
+    player_pok.info
+
+  end
 
 end
 
-
-def enemyFightLogic
-  
-end
-
-def fight_one_round
-  
-end
-
-def reset
-  
-end
+fight_one_round(player_pok, pc_pok)
 
 
-chose_pokemon
-enemy_pick
+
